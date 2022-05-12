@@ -1,2 +1,0 @@
-# frontierload
-frontier loading scripts

@@ -1,0 +1,6 @@
+#!/bin/bash
+export FRONTIER_SERVER="(proxyurl=http://localhost:3128)(serverurl=http://cmsfrontier4.cern.ch:8000/FrontierProd)"
+# this actualy returns an empty response but is part of standard set of queries
+echo "SELECT TABLE_NAME, COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE OWNER='CMS_COND_31X_FRONTIER' AND TABLE_NAME='ORA_DB' ORDER BY TABLE_NAME, COLUMN_ID" >small_query.sql
+./fn-req -n -f small_query.sql
+rm -f small_query.sql

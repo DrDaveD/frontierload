@@ -1,0 +1,18 @@
+#!/bin/bash
+export http_proxy=http://squid4.fnal.gov:3128
+let I=0
+RUNNING="running.`uname -n`"
+trap "rm -f $RUNNING" 0
+touch $RUNNING
+let P=0
+WGETSPERITER=15
+while [ $P -lt 10 ]; do
+        let P=$P+1
+        while [ -f $RUNNING ]; do
+                let I=$I+1
+                echo "Iteration $P:$I"
+                time bash -c 'n=0; while [ $n -lt '"$WGETSPERITER"' ]; do wget -qO/dev/null --header="X-Frontier-Id: dwdtest" "http://cmsfrontier7.cern.ch:8000/dwdfiles/Frontier/type=frontier_file:1:DEFAULT&encoding=BLOB&p1=medfile.tgz"; let n=$n+1; done'
+        done &
+done
+#rm -f $RUNNING
+wait

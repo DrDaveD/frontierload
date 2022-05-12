@@ -1,0 +1,21 @@
+#!/bin/bash
+export FRONTIER_SERVER="(proxyurl=http://SquidELBTest-539578840.us-west-2.elb.amazonaws.com:3128)(serverurl=http://cmsfrontier4.cern.ch:8000/dwdtest)"
+echo "select 1 from dual" >small_query.sql
+#FNREQREPEATSPERITER=200;FNREQITERSPERITER=10
+FNREQREPEATSPERITER=50;FNREQITERSPERITER=5
+NUMPARALLEL=10
+let I=0
+RUNNING="running.`uname -n`"
+trap "rm -f $RUNNING small_query.sql" 0
+touch $RUNNING
+let P=0
+while [ $P -lt $NUMPARALLEL ]; do
+        let P=$P+1
+        while [ -f $RUNNING ]; do
+                let I=$I+1
+                echo "Iteration $P:$I"
+		time bash -c 'n=0; while [ $n -lt '"$FNREQITERSPERITER"' ]; do ./fn-req -n -c '"$FNREQREPEATSPERITER"' -f small_query.sql; let n=$n+1; done >/dev/null'
+	#rm -f $RUNNING
+        done &
+done
+wait

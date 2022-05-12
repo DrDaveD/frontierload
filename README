@@ -1,0 +1,42 @@
+Files in this directory and how to use them:
+
+wgetcmscond -- simulates the queries of a cms job using wget.  Set
+        the http_proxy environment variable to the squid, run it once
+        to fill the squid's cache, and then run lots of them in parallel.
+
+fn-req -- simple command line binary for the frontier client, used by
+	"smallquery" to do repeated requests on the same connection.
+	
+largequery - Reads largish ~8MB or so file repeatedly with wget, used
+	    for testing bandwidth limits.
+	Set "http_proxy" to your squid.
+	The number in the while loop is the number of parallel
+	    processes to run.
+	WGETSPERIITER is the number of wgets per iteration.
+	Adjust the while loop number to get maximum throughput and
+	    and adjust WGETSPERITER to print out a summary every
+	    30 to 60 seconds.
+
+smallquery - Reads a small query repeatedly, used for testing limits
+	    of CPU usage.
+	Set the value of "proxyurl" in FRONTIER_SERVER to your squid.
+	The number in the while loop is the number of parallel
+	    processes to run.
+	FNREQREPEATSPERITER is the number of repeated queries each
+	    connection will do.
+	FNREQITERSPERITER is the number of times the above is repeated
+	    per iteration.
+	Adjust the while loop number to set the number of parallel
+	    clients, and adjust the other two numbers to print out a
+	    summary every 30 to 60 seconds.
+
+Hitting control-C to abort either smallquery or largequery will cause
+the background processes to stop running after they're finished with
+their current iteration.
+
+It's best to run these on 2 or 3 client machines with each squid to
+make sure you're not limited by the client side.  Maybe you'll need
+more for largequery if you have less bandwidth on your client machines
+than on your squid.
+
+Dave Dykstra, 10/23/14
